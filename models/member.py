@@ -16,3 +16,9 @@ class IndoorGames(models.Model):
     gender = fields.Selection([('male', "Male"), ('female', 'Female')], string='Gender')
     dob = fields.Date(string="Date of Birth")
     member_type = fields.Char(string='Member Type', default="None", readonly=1)
+    # member_type = fields.Char(string='Member Type', default="None", readonly=1, compute="_get_mem_status")
+
+    parent_o2m_players = fields.Many2one("indoor.event", string="Parent m2m players")
+
+    def _get_mem_status(self):
+        pass

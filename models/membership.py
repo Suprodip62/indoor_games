@@ -13,7 +13,8 @@ class IndoorGames(models.Model):
     member_name = fields.Many2one("indoor.member", string="Name")
 
     partner_type = fields.Selection([('100', "Basic"), ('200', 'Silver'), ('300', "Gold")], string="Membership Type")
-    
+    partner_type_member_update = fields.Char(string="Member Update", compute="_get_type")
+
     # membership_products = fields.One2many()
     game_ids = fields.One2many("indoor.game","parent_id", string="Games")
 
@@ -48,8 +49,26 @@ class IndoorGames(models.Model):
 
         if today > datetime1.date():
             self.membership_status = False
+            self.member_name.member_type = None
         else:
             self.membership_status = True
         # return True --> not return, something self..........
         # self.membership_status = True
     # https://stackoverflow.com/questions/32287708/python-compare-the-date-in-the-string-with-todays-date
+
+    def _get_type(self):
+        for item in self:
+            print("Member type updated called................")
+            item.partner_type_member_update = item.partner_type # jekhan theke call deoya hoyeche sekhaner value na deoyay error
+            # item.member_name.member_type = item.partner_type
+            if item.partner_type == '100':
+                item.member_name.member_type = 'Basic'
+            elif item.partner_type == '200':
+                item.member_name.member_type = 'Silver'
+            elif item.partner_type == '300':
+                item.member_name.member_type = 'Gold'
+            
+
+            # print("member name................", item.member_name.member_type)
+            # print("member type................", item.partner_type)
+            

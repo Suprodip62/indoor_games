@@ -18,6 +18,7 @@
         # 'views/female_patient_view.xml',
         'views/game_view.xml',
         'views/membership_view.xml',
+        'views/event_view.xml',
     ],
     'demo': [
         # 'demo/account_demo.xml',
