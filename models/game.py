@@ -13,4 +13,7 @@ class IndoorGames(models.Model):
     silver_partner_discount_percentage = fields.Char(string="Silver Partner Discount Percentage")
     delay_charge = fields.Char(string="Delay Charge")
     available = fields.Boolean(string="Available", default=True)
-    
+
+    parent_id = fields.Many2one("indoor.membership", string="Membership")
+
+    # shift + nampad 0 --> duplicate    

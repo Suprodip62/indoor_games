@@ -1,14 +1,55 @@
 from odoo import api, fields, models
+from datetime import date
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 class IndoorGames(models.Model):
     _name = "indoor.membership"
     _inherit = []
     _description = "Indoor Games Management System Membership"
+    _rec_name = "member_name"
 
-    member_name = fields.Char(string="Name") # Many2one with indoor.member
-    partner_type = fields.Selection([('basic', "Basic"), ('silver', 'Silver'), ('gold', "Gold")], string="Membership Type")
-    membership_fees = fields.Integer(string="Fees", readonly=1) # onchange: basic-->100, silver-->200, gold-->300 times(*) 1 for 1 month, 2 for 2 month
+    # member_name = fields.Char(string="Name") # Many2one with indoor.member
+    member_name = fields.Many2one("indoor.member", string="Name")
+
+    partner_type = fields.Selection([('100', "Basic"), ('200', 'Silver'), ('300', "Gold")], string="Membership Type")
+    
     # membership_products = fields.One2many()
+    game_ids = fields.One2many("indoor.game","parent_id", string="Games")
+
     membership_duration = fields.Selection([('1', "1 Month"), ('2', '2 Month'), ('3', "3 Month")], string="Duration")
     # membership_start_time = fields.Date(string="Start Time") --> cancel
-    membership_end_time = fields.Date(string="End Time") # onchange: auto calculate from duration
+
+    membership_end_time = fields.Char(string="End Time", compute="_get_end_date") # onchange: auto calculate from duration
+    
+    # membership_staus = active/expired --> depends--> onchange: membership_end_time
+    membership_status = fields.Boolean(string="Membership Status", compute="_get_status")
+
+    membership_fees = fields.Integer(string="Fees", compute="_get_fees", readonly=1) # onchange: basic-->100, silver-->200, gold-->300 times(*) 1 for 1 month, 2 for 2 month
+
+    @api.depends('partner_type', 'membership_duration')
+    def _get_fees(self):
+        print("******=====calling compute function=====******")
+        for item in self:
+            item.membership_fees = int(item.partner_type) * int(item.membership_duration)
+    @api.depends('membership_duration')
+    def _get_end_date(self):
+        today = date.today()
+        for item in self:
+            item.membership_end_time = today + relativedelta(months=int(item.membership_duration))
+
+    # https://stackoverflow.com/questions/29867945/python-find-date-beginning-two-months-prior-to-today-and-start-on-a-monday
+
+    @api.depends('membership_end_time')
+    def _get_status(self):
+        datetimeStart = self.membership_end_time +  " 12:00:00"
+        datetime1 = datetime.strptime(datetimeStart, "%Y-%m-%d %H:%M:%S")
+        today = date.today()
+
+        if today > datetime1.date():
+            self.membership_status = False
+        else:
+            self.membership_status = True
+        # return True --> not return, something self..........
+        # self.membership_status = True
+    # https://stackoverflow.com/questions/32287708/python-compare-the-date-in-the-string-with-todays-date

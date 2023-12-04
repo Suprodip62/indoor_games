@@ -6,6 +6,8 @@ class IndoorGames(models.Model):
     _description = "Indoor Games Management System Event"
 
     member_name = fields.Char(string="Name") # Many2one with indoor.member
+    # member_name = fields.Many2one("indoor.member", string="Name")
+
     partner_type = fields.Char(string="Membership Type") # onchange: member_type
     # event_game = Many2one with indoor.game
     # event_players = Many2many with indoor.member

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <odoo>
-    <menuitem id="menu_indoor_root" name="Indor Games" sequence="0"/>
+    <menuitem id="menu_indoor_root" name="Indoor Games" sequence="0"/>
 </odoo>

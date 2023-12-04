@@ -24,14 +24,16 @@
                     <group>
                         <group>
                             <field name="member_name"/>
-                        </group>
-                        <group>
                             <field name="partner_type"/>
-                            <field name="membership_fees"/>
-                            <field name="membership_duration"/>
+                            <field name="game_ids" widget="many2many_tags"/>
                         </group>
                         <group>
+                            <field name="membership_duration"/>
                             <field name="membership_end_time"/>
+                            <field name="membership_status"/>
+                        </group>
+                        <group>
+                            <field name="membership_fees"/>
                         </group>
                     </group>
                 </sheet>
@@ -86,6 +88,6 @@
     </record>
 
 
-    <menuitem id="menu_indoor_membership" name="Membership" action="action_indoor_membership" parent="menu_indoor_root" sequence="3"/>
+    <menuitem id="menu_indoor_membership" name="Memberships" action="action_indoor_membership" parent="menu_indoor_root" sequence="3"/>
 
 </odoo>
