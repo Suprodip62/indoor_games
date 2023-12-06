@@ -3,6 +3,7 @@ from datetime import date
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
+
 class IndoorGames(models.Model):
     _name = "indoor.membership"
     _inherit = []
@@ -10,7 +11,7 @@ class IndoorGames(models.Model):
     _rec_name = "member_name"
 
     # member_name = fields.Char(string="Name") # Many2one with indoor.member
-    member_name = fields.Many2one("indoor.member", string="Name")
+    member_name = fields.Many2one("indoor.member", string="Name", domain=[('member_type', '=', 'None')])
 
     partner_type = fields.Selection([('100', "Basic"), ('200', 'Silver'), ('300', "Gold")], string="Membership Type")
     partner_type_member_update = fields.Char(string="Member Update", compute="_get_type")
@@ -61,6 +62,7 @@ class IndoorGames(models.Model):
             print("Member type updated called................")
             item.partner_type_member_update = item.partner_type # jekhan theke call deoya hoyeche sekhaner value na deoyay error
             # item.member_name.member_type = item.partner_type
+            item.member_name.membership_end_time = item.membership_end_time
             if item.partner_type == '100':
                 item.member_name.member_type = 'Basic'
             elif item.partner_type == '200':

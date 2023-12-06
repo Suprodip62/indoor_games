@@ -1,6 +1,6 @@
 from odoo import api, fields, models
 from datetime import date
-from datetime import datetime
+from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 
 class IndoorGames(models.Model):
@@ -17,13 +17,14 @@ class IndoorGames(models.Model):
     
 
     # event_game = Many2one with indoor.game
+    # event_game = fields.Many2one("indoor.game", string="Event Game", domain=[('indoor_membership.partner_type', '=', 'Basic')])
     event_game = fields.Many2one("indoor.game", string="Event Game")
 
     # event_players = Many2many with indoor.member
     event_players = fields.One2many("indoor.member", "parent_o2m_players", string="Players")
 
     event_start_time = fields.Datetime(string="Start Time")
-    # event_end_time = fields.Datetime(string="End Time")
+    event_end_time = fields.Datetime(string="End Time", compute="_get_end_date")
     # event_duration = selection-->1hr, 2hr, 3hr
     event_duration = fields.Selection([('1', "1 Hour"), ('2', '2 Hour'), ('3', "3 Hour")], string="Duration")
     
@@ -45,6 +46,22 @@ class IndoorGames(models.Model):
     # def _get_type(self):
     #     for item in self:
     #         item.partner_type = item.member_name.partner_type
+
+
+    def search_games(self):
+        search_game_ids = self.env['indoor.event'].search([('event_game', '=', self.event_game.name)])
+        for item in search_game_ids:
+            print("Name: ", item.member_name.name, "        Type: ", item.event_game.name)
+
+
+
+
+    @api.depends('event_duration')
+    def _get_end_date(self):
+        today = date.today()
+        for item in self:
+            item.event_end_time = self.event_start_time + timedelta(hours=int(item.event_duration))
+
 
     @api.depends('event_game', 'event_duration')
     def _get_bill(self):
@@ -90,5 +107,27 @@ class IndoorGames(models.Model):
 
 
 
-# event close hole game ta available hobe
-# membership expire hole member er type = None hobe
+
+# event create hole select kora game er status unavailable hobe. event close hole game ta available hobe. ekhane start_time
+  # end_time both indoor.game model e set korte hobe.
+  # button click korle function call korbe and oi function e custom sql query lekha thakbe jar maddhome indoor.membership model e
+    # ei start_time and end_time e ei game available or not find out korbe.
+    # button click er age event_game, start_time, end_time choose korte hobe.
+
+# membership expire hole member er type = None hobe --> done
+# at a time multiple membership e thaka jabe na --> member_name select korar pore onchange e available or not dekhabe-no-->domain-->done
+  # onchange e field e availabe ashle then etar onchange e baki field gulo show korbe age hidden thakbe.
+# not only the type of variable but also the end time will be passed to the indoor.member --> done
+# cancel membership
+# event calculate korar age check expirity of membership
+# event e all game dekhacche. but member je game e membership niyeche check kore only segulor upor discount calculate hobe.
+  # er jonne membership create korar smy select kora game gulu o indoor.member model e pathate hobe.
+  # or membership theke game selection bad dibo.
+# membership neyar smy check prev membership expired or not(membership_status == False, member_type==None)
+# indoor.member e parent m2m players --> force show --> form view id same with indoor.member --> done
+# indoor.member e notebook e membership history, event history, players/participation history, transaction history
+# game quantity, purchase--> vendor
+# settings --> inherite tree view
+# create new type of membership
+
+# static --> onno obj change korle sobar jonne change hoye jabe so not possible
