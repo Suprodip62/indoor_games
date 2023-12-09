@@ -10,7 +10,9 @@
                 <field name="event_game"/>
                 <field name="event_start_time"/>
                 <field name="event_duration"/>
+                <field name="event_end_time"/>
                 <field name="bill"/>
+                <field name="payment_method"/>
                 <field name="payment_status"/>
             </tree>
         </field>
@@ -43,6 +45,7 @@
                             <!-- <field name="delay_charge"/> -->
                             <field name="tax"/>
                             <field name="bill"/>
+                            <field name="payment_method"/>
                             <field name="payment_status"/>
                         </group>
                     </group>

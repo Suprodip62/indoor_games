@@ -2,6 +2,8 @@ from odoo import api, fields, models
 from datetime import date
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from odoo.exceptions import UserError
+
 
 class IndoorGames(models.Model):
     _name = "indoor.event"
@@ -24,9 +26,17 @@ class IndoorGames(models.Model):
     event_players = fields.One2many("indoor.member", "parent_o2m_players", string="Players")
 
     event_start_time = fields.Datetime(string="Start Time")
-    event_end_time = fields.Datetime(string="End Time", compute="_get_end_date")
     # event_duration = selection-->1hr, 2hr, 3hr
     event_duration = fields.Selection([('1', "1 Hour"), ('2', '2 Hour'), ('3', "3 Hour")], string="Duration")
+
+
+    # @api.depends('event_start_time', 'event_duration')
+    # def _get_end_date(self):
+        # for item in self:
+            # item.event_end_time = item.event_start_time + timedelta(hours=int(item.event_duration))
+    event_end_time = fields.Datetime(string="End Time")
+    # event_end_time = fields.Datetime(string="End Time", compute="_get_end_date")
+
     
     # event_satus = in hh hours, mm minutes-->Running-->Closed
     # event_status = fields.Boolean(string="Event Status", compute="_get_status")
@@ -39,6 +49,7 @@ class IndoorGames(models.Model):
     tax = fields.Integer(string="Tax", default=0, readonly=1)
     bill = fields.Integer(string="Bill", compute="_get_bill")
 
+    payment_method = fields.Selection([('cash', "Cash"), ('bkash', "bKash")], string="Payment Method")
     # payment_status = paid/due-->boolean, checkbox, default-->due
     payment_status = fields.Boolean(string="Payment Status")
 
@@ -49,22 +60,54 @@ class IndoorGames(models.Model):
 
 
     def search_games(self):
-        search_game_ids = self.env['indoor.event'].search([('event_game', '=', self.event_game.name)])
-        for item in search_game_ids:
-            print("Name: ", item.member_name.name, "        Type: ", item.event_game.name)
-
-
-
-
-    @api.depends('event_duration')
-    def _get_end_date(self):
-        today = date.today()
+        # search_game_ids = self.env['indoor.event'].search([('event_game', '=', self.event_game.name)])
+        # for item in search_game_ids:
+            # if (item.event_start_time < self.event_start_time < item.event_end_time) or (item.event_start_time < self.event_end_time < item.event_end_time):
+            #     raise UserError("The game is not availabe")
+            # print("Name: ", item.member_name.name, "        Type: ", item.event_game.name)
+            # print("Event Start: ", item.event_start_time, "        Event End: ", item.event_end_time)
+        # print("Start Time: ", self.event_start_time, "        End Time: ", self.event_end_time)
+        print(type(self.event_start_time))
+    @api.onchange('event_start_time','event_duration')
+    def onchange_event_start_duration(self,):
         for item in self:
-            item.event_end_time = self.event_start_time + timedelta(hours=int(item.event_duration))
+            print("type of event_start_time", type(item.event_start_time))
+            print("event_start_time", item.event_start_time)
+            print("event_duration", item.event_duration)
+
+
+            if item.event_start_time == False or item.event_duration == False: # not None
+                item.event_end_time = False # not None
+            else:
+                item.event_end_time = item.event_start_time + timedelta(hours=int(item.event_duration))
+            print("Type of timedelta: ", type(timedelta(hours=int(item.event_duration))))
+
+
+            print("Event Start Time", item.event_start_time)
+            print("Event End Time", item.event_end_time)
+            if item.event_start_time != False and item.event_end_time != False:
+                search_game_ids = item.env['indoor.event'].search([('event_game', '=', item.event_game.name)])
+                cnt = 0
+                for rec in search_game_ids:
+                    print("cnt-->", cnt, "Event Member Name-->", rec.member_name.name)
+                    cnt += 1
+                    print("Final-->", item.event_start_time)
+                    print("Final-->", item.event_end_time)
+                    print("Final-->", rec.event_start_time)
+                    print("Final-->", rec.event_end_time)
+
+                    # if (type(item.event_start_time) != type(True)) and (type(item.event_end_time) != type(True) ) and ((rec.event_start_time < item.event_start_time < rec.event_end_time) or (rec.event_start_time < item.event_end_time < rec.event_end_time)):
+                        # raise UserError("The game is not availabe")
+                    if (rec.event_start_time < item.event_start_time < rec.event_end_time) or (rec.event_start_time < item.event_end_time < rec.event_end_time):
+                        raise UserError("The game is not availabe")
+            else:
+                print("Datetime True/False")
+            
 
 
     @api.depends('event_game', 'event_duration')
     def _get_bill(self):
+        cnt = 0
         for item in self:
             # item.bill = int(item.event_game.charge_per_hour) * int(item.event_duration)
             # item.bill = 100
@@ -85,7 +128,11 @@ class IndoorGames(models.Model):
             item.delay_charge = item.event_game.delay_charge * item.delay_hour
             item.tax = item.subtotal * 2/100
             item.bill = item.subtotal - item.discount + item.delay_charge + item.tax
-             
+            
+            
+            print("cnt-->", cnt, "Event Master-->", item.member_name.name, "Event Game-->", item.event_game.name)
+            print("Duration-->", item.event_duration, "Bill-->", item.bill)
+            cnt += 1
             print("discount.............", item.discount)
             print("bill.............", (int(item.event_game.charge_per_hour) - item.discount) * int(item.event_duration) )
 
