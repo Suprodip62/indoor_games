@@ -26,7 +26,7 @@
                             <field name="member_name"/>
                             <field name="partner_type"/>
                             <field name="game_ids" widget="many2many_tags"/>
-                            <field name="partner_type_member_update"/>
+                            <!-- <field name="partner_type_member_update"/> -->
                         </group>
                         <group>
                             <field name="membership_duration"/>
@@ -37,6 +37,10 @@
                             <field name="membership_fees"/>
                         </group>
                     </group>
+                    <notebook>
+                        <page name="Most Discount Games on that Partner type">
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

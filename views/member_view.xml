@@ -32,21 +32,40 @@
                             <field name="name"/>
                             <field name="email"/>
                             <field name="phone"/>
-                            <field name="address"/>
+                        </group>
+                        <group>
+                            <field name="gender"/>
                             <field name="dob"/>
                         </group>
-                        <group>
-                            <field name="website"/>
-                            <field name="occupation"/>
-                            <field name="language"/>
-                            <field name="gender"/>
-                        </group>
-                        <group>
-                            <field name="member_type"/>
-                            <field name="membership_end_time"/>
-                            <field name="membership_status"/>
-                        </group>
                     </group>
+                    <notebook>
+                        <page name="Personal Information">
+                            <group>
+                                <group>
+                                    <field name="age"/>
+                                    <field name="address"/>
+                                </group>
+                                <group>
+                                    <field name="website"/>
+                                    <field name="occupation"/>
+                                    <field name="language"/>   
+                                </group>
+                            </group>
+                        </page>
+                        <page name="Membership Information">
+                            <group>
+                                <field name="member_type"/>
+                                <field name="membership_end_time"/>
+                                <field name="membership_status"/>
+                            </group>
+                        </page>
+                        <page name="Health Information">
+                            <group>
+                                <field name="height"/>
+                                <field name="weight"/>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

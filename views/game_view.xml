@@ -28,17 +28,34 @@
                         <group>
                             <field name="name"/>
                             <field name="charge_per_hour"/>
+                            <field name="qty"/>
                         </group>
                         <group>
                             <field name="delay_charge"/>
                             <field name="available"/>
                         </group>
-                        <group>
-                            <field name="basic_partner_discount_percentage"/>
-                            <field name="gold_partner_discount_percentage"/>
-                            <field name="silver_partner_discount_percentage"/>
-                        </group>
+                        
                     </group>
+                    <notebook>
+                        <page name="Membership Discount">
+                            <group>
+                                <group>
+                                    <field name="basic_partner_discount_percentage"/>
+                                    <field name="silver_partner_discount_percentage"/>
+                                    <field name="gold_partner_discount_percentage"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page name="Participation Discount">
+                            <group>
+                                <group>
+                                    <field name="basic_partner_participation_discount_percentage"/>
+                                    <field name="silver_partner_participation_discount_percentage"/>
+                                    <field name="gold_partner_participation_discount_percentage"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

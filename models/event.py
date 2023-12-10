@@ -21,6 +21,7 @@ class IndoorGames(models.Model):
     # event_game = Many2one with indoor.game
     # event_game = fields.Many2one("indoor.game", string="Event Game", domain=[('indoor_membership.partner_type', '=', 'Basic')])
     event_game = fields.Many2one("indoor.game", string="Event Game")
+    event_game_id = fields.Char(string="Event Game ID")
 
     # event_players = Many2many with indoor.member
     event_players = fields.One2many("indoor.member", "parent_o2m_players", string="Players")
@@ -45,6 +46,7 @@ class IndoorGames(models.Model):
     # bill = indoor.game-->charge/hour * event_duration + indoor.game-->indoor.partner_type discount percentage + tax
     subtotal = fields.Integer(string="Subtotal", default=0, readonly=1)
     discount = fields.Integer(string="Discount", default=0, readonly=1)
+    participation_discount = fields.Integer(string="Participation Discount", default=0, readonly=1)
     delay_charge = fields.Integer(string="Delay Charge", default=0, readonly=1)
     tax = fields.Integer(string="Tax", default=0, readonly=1)
     bill = fields.Integer(string="Bill", compute="_get_bill")
@@ -86,20 +88,53 @@ class IndoorGames(models.Model):
             print("Event Start Time", item.event_start_time)
             print("Event End Time", item.event_end_time)
             if item.event_start_time != False and item.event_end_time != False:
-                search_game_ids = item.env['indoor.event'].search([('event_game', '=', item.event_game.name)])
-                cnt = 0
-                for rec in search_game_ids:
-                    print("cnt-->", cnt, "Event Member Name-->", rec.member_name.name)
-                    cnt += 1
-                    print("Final-->", item.event_start_time)
-                    print("Final-->", item.event_end_time)
-                    print("Final-->", rec.event_start_time)
-                    print("Final-->", rec.event_end_time)
+                # item.event_game.qty
+                game_id_lst = []
+                assign_flag = False
+                for i in range(1, item.event_game.qty+1, 1):
+                    game_id_lst.append(item.event_game.name + "-" + str(i))
+                    s1 = item.event_game.name + "-" + str(i)
+                    search_game_ids = item.env['indoor.event'].search([('event_game_id', '=', s1)])
+                    
+                    if len(search_game_ids) == 0:
+                        item.event_game_id = item.event_game.name + "-" + str(i)
+                        assign_flag = True
+                        print("Empty Search Result: ", item.event_game.name + "-" + str(i))
+                        print("s1: ", s1)
+                        break
+                    else:
+                        flag = True
+                        for rec in search_game_ids:
+                            if (rec.event_start_time < item.event_start_time < rec.event_end_time) or (rec.event_start_time < item.event_end_time < rec.event_end_time):
+                                flag = False
+                                break
+                        if flag == True:
+                            item.event_game_id = item.event_game.name + "-" + str(i)
+                            assign_flag = True
+                            break
+                if assign_flag == False:
+                    raise UserError("The game is not availabe")
+                # item.event_game.qty
 
-                    # if (type(item.event_start_time) != type(True)) and (type(item.event_end_time) != type(True) ) and ((rec.event_start_time < item.event_start_time < rec.event_end_time) or (rec.event_start_time < item.event_end_time < rec.event_end_time)):
-                        # raise UserError("The game is not availabe")
-                    if (rec.event_start_time < item.event_start_time < rec.event_end_time) or (rec.event_start_time < item.event_end_time < rec.event_end_time):
-                        raise UserError("The game is not availabe")
+                # without qty
+                # search_game_ids = item.env['indoor.event'].search([('event_game', '=', item.event_game.name)])
+                # cnt = 0
+                # for rec in search_game_ids:
+                #     print("cnt-->", cnt, "Event Member Name-->", rec.member_name.name)
+                #     cnt += 1
+                #     print("Final-->", item.event_start_time)
+                #     print("Final-->", item.event_end_time)
+                #     print("Final-->", rec.event_start_time)
+                #     print("Final-->", rec.event_end_time)
+
+                #     # if (type(item.event_start_time) != type(True)) and (type(item.event_end_time) != type(True) ) and ((rec.event_start_time < item.event_start_time < rec.event_end_time) or (rec.event_start_time < item.event_end_time < rec.event_end_time)):
+                #         # raise UserError("The game is not availabe")
+                #     if (rec.event_start_time < item.event_start_time < rec.event_end_time) or (rec.event_start_time < item.event_end_time < rec.event_end_time):
+                #         raise UserError("The game is not availabe")
+                # print("Event Start Time-after UserError", item.event_start_time)
+                # print("Event End Time-after UserError", item.event_end_time)
+                # without qty
+
             else:
                 print("Datetime True/False")
             
@@ -125,16 +160,27 @@ class IndoorGames(models.Model):
             elif item.member_name.member_type == "Gold":
                 item.discount = (int(item.event_game.charge_per_hour) * item.event_game.gold_partner_discount_percentage/100)
             # item.subtotal = (int(item.event_game.charge_per_hour) * int(item.event_duration)) - item.discount
+            sub_discount = 0
+            for rec in item.event_players:
+                if rec.member_type == "None":
+                    sub_discount += 0
+                elif rec.member_type == "Basic":
+                    sub_discount += (int(item.event_game.charge_per_hour) * item.event_game.basic_partner_participation_discount_percentage/100)
+                elif rec.member_type == "Silver":
+                    sub_discount += (int(item.event_game.charge_per_hour) * item.event_game.silver_partner_participation_discount_percentage/100)
+                elif rec.member_type == "Gold":
+                    sub_discount += (int(item.event_game.charge_per_hour) * item.event_game.gold_partner_participation_discount_percentage/100)
+            item.participation_discount = sub_discount
             item.delay_charge = item.event_game.delay_charge * item.delay_hour
             item.tax = item.subtotal * 2/100
-            item.bill = item.subtotal - item.discount + item.delay_charge + item.tax
+            item.bill = item.subtotal - item.discount - item.participation_discount + item.delay_charge + item.tax
             
             
-            print("cnt-->", cnt, "Event Master-->", item.member_name.name, "Event Game-->", item.event_game.name)
-            print("Duration-->", item.event_duration, "Bill-->", item.bill)
-            cnt += 1
-            print("discount.............", item.discount)
-            print("bill.............", (int(item.event_game.charge_per_hour) - item.discount) * int(item.event_duration) )
+            # print("cnt-->", cnt, "Event Master-->", item.member_name.name, "Event Game-->", item.event_game.name)
+            # print("Duration-->", item.event_duration, "Bill-->", item.bill)
+            # cnt += 1
+            # print("discount.............", item.discount)
+            # print("bill.............", (int(item.event_game.charge_per_hour) - item.discount) * int(item.event_duration) )
 
 
 
@@ -178,3 +224,26 @@ class IndoorGames(models.Model):
 # create new type of membership
 
 # static --> onno obj change korle sobar jonne change hoye jabe so not possible
+
+
+
+
+
+# multiple qty of games thakbe --> event create korar smy event_game diye prev all event e search na kore event_game.game_id diye
+  # search korte hobe. new model lagbe jekhane game_id soho all game dekha jabe.
+  # first, game_name and game_id je model e assign kora ache sei model e game_name diye search kore select kora game er game_id
+    # sobgulo ber kore ekta list e rakhte hobe.
+  # then, 2 level search korte hobe. 1st level hobe game_id gulor moddhe konota free ache ki na. free thakle seta direct assign kore dibo.
+  # third, jodi game_id sobgulo kono na kono time e assigned thake tahole dekhte hobe je time e event_master chaiche sei time e
+    # kono game_id free ache ki na.
+  # jodi dekha jay event_master je time e chache sei time sobgulo game_id assigned then UserError raise korbo je not available this time.
+    # sathe kon game_id ta kon time e free seta o dekhabo jate sei moto game_id nite pare.
+  #--> onchange e end_time calc hocche but save korle end_time save hocche na.
+
+# statusbar thakbe --> draft, confirm, cancel
+# member participation discount thakbe
+# member er height, weight, health status, age onujayi event e player selection e suggestion thakbe
+# security --> user access --> member read, nijer info te wright, delete o thakbe, game read, membership e read, event e read
+#              executive access --> member all, game read, membership all, event all
+#              admin access --> member all, game all, membership all, event all
+# settings --> 
