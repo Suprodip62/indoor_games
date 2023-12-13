@@ -5,7 +5,9 @@
         <field name="name">indoor.member.tree</field>
         <field name="model">indoor.member</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree decoration-success="member_type == 'Basic' " 
+                    decoration-muted="member_type == 'Silver' " 
+                    decoration-danger="member_type == 'Gold' ">
                 <field name="name" string="Member Name"/>
                 <field name="email"/>
                 <field name="phone"/>
@@ -25,6 +27,9 @@
         <field name="model">indoor.member</field>
         <field name="arch" type="xml">
             <form>
+                <header>
+                    <button name="validate_phone" string="Validate Phone" type="object" class="oe_highlight"/>
+                </header>
                 <sheet>
                     <field name="image" widget="image" class="oe_avatar"></field>
                     <group>
@@ -61,8 +66,30 @@
                         </page>
                         <page name="Health Information">
                             <group>
-                                <field name="height"/>
-                                <field name="weight"/>
+                                <group string="Genaral Measurement">
+                                    <field name="height"/>
+                                    <field name="weight"/>
+                                    <field name="bmi"/>
+                                    <field name="bmr"/>
+                                </group>
+                                <group string="Injury Information">
+                                    <field name="injury_point"/>
+                                    <field name="injury_type"/>
+                                    <field name="injury_level"/>
+                                </group>
+                                <group string="Detail Information">
+                                    <field name="neck"/>
+                                    <field name="chest"/>
+                                    <field name="right_arm"/>
+                                    <field name="left_arm"/>
+                                    <field name="waist"/>
+                                    <field name="hips"/>
+                                    <field name="right_thigh"/>
+                                    <field name="left_thigh"/>
+                                    <field name="right_calf"/>
+                                    <field name="left_calf"/>
+                                </group>
+
                             </group>
                         </page>
                     </notebook>

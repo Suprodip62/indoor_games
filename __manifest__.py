@@ -19,6 +19,11 @@
         'views/game_view.xml',
         'views/membership_view.xml',
         'views/event_view.xml',
+        'views/transaction_view.xml',
+        'views/report_view.xml',
+        'views/tournament_view.xml',
+        'report/indoor_reports.xml',
+        'report/purchase_reports.xml'
     ],
     'demo': [
         # 'demo/account_demo.xml',

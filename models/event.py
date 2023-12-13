@@ -13,6 +13,9 @@ class IndoorGames(models.Model):
 
     # member_name = fields.Char(string="Name") # Many2one with indoor.member
     member_name = fields.Many2one("indoor.member", string="Event Master")
+    # event_id = fields.Char(string="Event ID")
+
+    tournament_id = fields.Many2one("indoor.tournament", string="Tournament ID")
 
     # partner_type = fields.Char(string="Membership Type") # onchange: member_name
     # partner_type = fields.Char(string="Membership Type", compute="_get_type") # skipped for now --> sol--> onchange not method
@@ -37,6 +40,8 @@ class IndoorGames(models.Model):
             # item.event_end_time = item.event_start_time + timedelta(hours=int(item.event_duration))
     event_end_time = fields.Datetime(string="End Time")
     # event_end_time = fields.Datetime(string="End Time", compute="_get_end_date")
+    state = fields.Selection([('draft',"Draft"),('confirm',"Confirm"),('cancel',"Cancel")], string="Status")
+
 
     
     # event_satus = in hh hours, mm minutes-->Running-->Closed
@@ -70,6 +75,66 @@ class IndoorGames(models.Model):
             # print("Event Start: ", item.event_start_time, "        Event End: ", item.event_end_time)
         # print("Start Time: ", self.event_start_time, "        End Time: ", self.event_end_time)
         print(type(self.event_start_time))
+    def button_confirm(self):
+        self.write({
+           'state': "confirm"
+        })
+        print("......id.....", self.id)
+        return {'name' : 'Transaction',
+            'type' : 'ir.actions.act_window',
+            'res_model' : 'indoor.transaction',
+            'view_mode' : 'form',
+            'target' : 'new',
+            # 'target' : 'current',
+            # 'target' : 'main',
+            'context' : {'member_name' : self.member_name.name, 
+                         'event_id' : self.id,
+                         'event_game' : self.event_game.name, 
+                         'event_game_id' : self.event_game_id,
+                         'event_start_time' : self.event_start_time,
+                         'event_duration' : self.event_duration,
+                         'event_end_time' : self.event_end_time,
+                         'subtotal' : self.subtotal,
+                         'discount' : self.discount,
+                         'participation_discount' : self.participation_discount,
+                         'tax' : self.tax,
+                         'bill' : self.bill}
+            # 'domain' : [('patient_id', '=', self.id)]
+        }
+    def button_cancel(self):
+        self.write({
+           'state': "cancel"
+       })
+    def button_report(self):
+        return {'name' : 'Report',
+            'type' : 'ir.actions.act_window',
+            'res_model' : 'indoor.report',
+            'view_mode' : 'form',
+            'target' : 'new',
+            # 'target' : 'current',
+            # 'target' : 'main',
+            # 'context' : {'member_name' : self.member_name.name, 
+            #              'event_game' : self.event_game.name, 
+            #              'event_game_id' : self.event_game_id,
+            #              'event_start_time' : self.event_start_time,
+            #              'event_duration' : self.event_duration,
+            #              'event_end_time' : self.event_end_time,
+            #              'subtotal' : self.subtotal,
+            #              'discount' : self.discount,
+            #              'participation_discount' : self.participation_discount,
+            #              'tax' : self.tax,
+            #              'bill' : self.bill}
+            # 'domain' : [('patient_id', '=', self.id)]
+        }
+    def button_smart(self):
+        return {'name' : 'Transaction',
+            'type' : 'ir.actions.act_window',
+            'res_model' : 'indoor.transaction',
+            'view_mode' : 'tree',
+            # 'target' : 'new',
+            'target' : 'current',
+            # 'domain' : [('patient_id', '=', self.id)]
+        }
     @api.onchange('event_start_time','event_duration')
     def onchange_event_start_duration(self,):
         for item in self:
@@ -154,22 +219,22 @@ class IndoorGames(models.Model):
             if item.member_name.member_type == "None":
                 item.discount = 0
             elif item.member_name.member_type == "Basic":
-                item.discount = (int(item.event_game.charge_per_hour) * item.event_game.basic_partner_discount_percentage/100)   
+                item.discount = (item.subtotal * item.event_game.basic_partner_discount_percentage/100)   
             elif item.member_name.member_type == "Silver":
-                item.discount = (int(item.event_game.charge_per_hour) * item.event_game.silver_partner_discount_percentage/100)  
+                item.discount = (item.subtotal * item.event_game.silver_partner_discount_percentage/100)  
             elif item.member_name.member_type == "Gold":
-                item.discount = (int(item.event_game.charge_per_hour) * item.event_game.gold_partner_discount_percentage/100)
+                item.discount = (item.subtotal * item.event_game.gold_partner_discount_percentage/100)
             # item.subtotal = (int(item.event_game.charge_per_hour) * int(item.event_duration)) - item.discount
             sub_discount = 0
             for rec in item.event_players:
                 if rec.member_type == "None":
                     sub_discount += 0
                 elif rec.member_type == "Basic":
-                    sub_discount += (int(item.event_game.charge_per_hour) * item.event_game.basic_partner_participation_discount_percentage/100)
+                    sub_discount += (item.subtotal * item.event_game.basic_partner_participation_discount_percentage/100)
                 elif rec.member_type == "Silver":
-                    sub_discount += (int(item.event_game.charge_per_hour) * item.event_game.silver_partner_participation_discount_percentage/100)
+                    sub_discount += (item.subtotal * item.event_game.silver_partner_participation_discount_percentage/100)
                 elif rec.member_type == "Gold":
-                    sub_discount += (int(item.event_game.charge_per_hour) * item.event_game.gold_partner_participation_discount_percentage/100)
+                    sub_discount += (item.subtotal * item.event_game.gold_partner_participation_discount_percentage/100)
             item.participation_discount = sub_discount
             item.delay_charge = item.event_game.delay_charge * item.delay_hour
             item.tax = item.subtotal * 2/100
@@ -202,7 +267,7 @@ class IndoorGames(models.Model):
 
 
 # event create hole select kora game er status unavailable hobe. event close hole game ta available hobe. ekhane start_time
-  # end_time both indoor.game model e set korte hobe.
+  # end_time both indoor.game model e set korte hobe. --> cancel
   # button click korle function call korbe and oi function e custom sql query lekha thakbe jar maddhome indoor.membership model e
     # ei start_time and end_time e ei game available or not find out korbe.
     # button click er age event_game, start_time, end_time choose korte hobe.
@@ -247,3 +312,9 @@ class IndoorGames(models.Model):
 #              executive access --> member all, game read, membership all, event all
 #              admin access --> member all, game all, membership all, event all
 # settings --> 
+
+# many2many event category field with color
+# game warning based on health information --> 
+  # auto calculate bmi, bmr based on height and weight 
+  # measurement field like kg, meter, cm
+# indoor.payment(indoor.transaction) new model thakbe, wizard e payment confirm button e confirm korte hobe. payment id indoor.event e add kore dibo.
