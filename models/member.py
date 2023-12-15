@@ -51,6 +51,8 @@ class IndoorGames(models.Model):
 
     parent_o2m_players = fields.Many2one("indoor.event", string="Parent m2m players", invisible=1)
 
+    member_transaction_cnt = fields.Integer(string="Member Transaction cnt", compute="_get_member_transaction_cnt")
+
     def _get_mem_status(self):
         pass
     def validate_phone(self):
@@ -81,6 +83,7 @@ class IndoorGames(models.Model):
     def onchange_email(self,):
         for item in self:
             if item.email:
+                # pattern = re.compile(r"^[a-zA-Z0-9'*()_-]+@[a-zA-Z0-9]+\.[a-zA-Z]{1,3}$")
                 pattern = re.compile(r"^[a-zA-Z0-9_-]+@[a-zA-Z0-9]+\.[a-zA-Z]{1,3}$")
                 if pattern.match(item.email) == None:
                     raise UserError("Email is not valid")
@@ -101,3 +104,21 @@ class IndoorGames(models.Model):
                 self.member_name.member_type = "None"
             else:
                 self.membership_status = True
+    
+
+    def _get_member_transaction_cnt(self):
+        for item in self:
+            search_transaction_ids = item.env['indoor.transaction'].search([('member_name', '=', self.name)])
+            cnt = 0
+            for rec in search_transaction_ids:
+                cnt += 1
+            item.member_transaction_cnt = cnt
+    def button_smart_paid(self):
+        return {'name' : 'Transaction',
+            'type' : 'ir.actions.act_window',
+            'res_model' : 'indoor.transaction',
+            'view_mode' : 'tree',
+            # 'target' : 'new',
+            'target' : 'current',
+            'domain' : [('member_name', '=', self.name)]
+        }

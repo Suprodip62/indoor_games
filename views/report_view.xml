@@ -20,14 +20,21 @@
                 <sheet>
                     <group>
                         <group>
+                            <field name="member_id"/>
+                            <field name="game_id"/>
+                        </group>
+                        <group>
                             <field name="start_time"/>
                             <field name="end_time"/>
                         </group>
+                        
                     </group>
                 </sheet>
                 <footer>
                     <button name="action_search" string="Print with Object" type="object" class="oe_highlight"/>
                     <button name="action_search_with_data" string="Print with Data" type="object" class="oe_highlight"/>
+                    <button name="action_search_2" string="Print with Object 2" type="object" class="oe_highlight"/>
+                    <button name="action_search_with_data_2" string="Print with Data 2" type="object" class="oe_highlight"/>
                     <button string="Cancel" class="oe_highlight" special="cancel"/>
                 </footer>
             </form>

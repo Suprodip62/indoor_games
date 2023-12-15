@@ -184,8 +184,32 @@ class IndoorGames(models.Model):
                             item.event_game_id = item.event_game.name + "-" + str(i)
                             assign_flag = True
                             break
-                if assign_flag == False:
+                if not assign_flag:
                     raise UserError("The game is not availabe")
+                else:
+                    vals = {
+
+                        'member_name' : item.member_name.name
+                    }
+                    vals = {
+                        'member_name' : item.member_name.id,
+                        'event_game' : item.event_game.id,
+                        'event_game_id' : item.event_game_id,
+                        'event_start_time' : item.event_start_time,
+                        'event_duration' : item.event_duration,
+                        'event_end_time' : item.event_end_time,
+                        'subtotal' : item.subtotal,
+                        'discount' : item.discount,
+                        'participation_discount' : item.participation_discount,
+                        'tax' : item.tax,
+                        'bill' : item.bill
+                    }
+                    
+                    item.env['indoor.event'].create(vals)
+                    # id_created = item.env['indoor.event'].create({'event_duration': '1'})
+                    # id_created = item.env['indoor.event'].create({'member_name' : item.member_name.id, 'event_duration': item.event_duration})
+                    # item.env.cr.commit()
+                
                 # item.event_game.qty
 
                 # without qty

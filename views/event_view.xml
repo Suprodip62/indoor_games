@@ -69,6 +69,10 @@
                         </group>
                     </group>
                 </sheet>
+                <footer>
+                    <button string="Save" class="oe_highlight" special="save"/>
+                    <button string="Cancel" class="oe_highlight" special="cancel"/>
+                </footer>
             </form>
         </field>
     </record>

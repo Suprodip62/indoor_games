@@ -172,4 +172,105 @@
     </template> -->
 
 
+    <record id="action_report_event_summary_2" model="ir.actions.report">
+        <field name="name">Event Summary</field>
+        <field name="model">indoor.event</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">indoor.report_event_summary_document_2</field>
+        <field name="report_file">indoor.report_event_summary_document_2</field>
+        <field name="print_report_name">('Report - %s' % (object.member_name.name))</field>
+        <field name="binding_model_id" ref="indoor.model_indoor_event"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_event_summary_document_2">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="row text-center">
+                    <h1 class="bg-info"> Event List </h1>
+                </div>
+
+                <table class="table table-sm">
+                    <tr>
+                        <th>Event Master</th>
+                        <th>Event Game</th>
+                        <th>Event Game ID</th>
+                        <th>Event Start Time</th>
+                        <th>Event Duration</th>
+                        <th>Event End Time</th>
+                        <th>Subtotal</th>
+                    </tr>
+                    <tr t-foreach="docs" t-as="doc">
+                        <td t-esc="doc.member_name.name"/>
+                        <td t-esc="doc.event_game.name"/>
+                        <td t-esc="doc.event_game_id"/>
+                        <td t-esc="doc.event_start_time"/>
+                        <td t-esc="doc.event_duration"/>
+                        <td t-esc="doc.event_end_time"/>
+                        <td t-esc="doc.subtotal"/>
+                    </tr>
+                </table>
+            </t>
+        </t>
+    </template>
+
+
+    <record id="action_report_event_summary_with_data_2" model="ir.actions.report">
+        <field name="name">Event Summary</field>
+        <field name="model">indoor.event</field>
+        <field name="report_type">qweb-html</field>
+        <field name="report_name">indoor.report_event_summary_document_with_data_2</field>
+        <field name="report_file">indoor.report_event_summary_document_with_data_2</field>
+        <field name="print_report_name">('Report - %s' % (object.member_name.name))</field>
+        <field name="binding_model_id" ref="indoor.model_indoor_event"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_event_summary_document_with_data_2">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <div class="row text-center">
+                    <h1 class="bg-info"> Event List </h1>
+                    <h3 class="bg-success"> Event Master: <span t-esc="event_master"/> </h3>
+                    <h4 class="bg-warning"> Event Game: <span t-esc="event_game"/></h4>
+                    <h6 class="bg-danger"> From <span t-esc="start_date"/> to <span t-esc="end_date"/></h6>
+                </div>
+
+                <table class="table table-sm">
+                    <tr class="text-center table-primary">
+                        <th>Game ID</th>
+                        <th>Start</th>
+                        <th>Duration</th>
+                        <th>End</th>
+                        <th>Subtotal</th>
+                    </tr>
+                    <t t-set="total" t-value="0"/>
+                    <t t-set="cnt" t-value="0"/>
+                    <tr t-foreach="data_line" t-as="line" class="text-center table-secondary">
+                        <td t-esc="line['event_game_id']"/>
+                        <td t-esc="line['event_start_time']"/>
+                        <td t-esc="line['event_duration']"/>
+                        <td t-esc="line['event_end_time']"/>
+                        <td t-esc="line['subtotal']" class="text-end"/>
+                        <t t-set="total" t-value="total + line['subtotal']"/>
+                        <t t-set="cnt" t-value="cnt + 1"/>
+                        <!-- <li t-if="record.phone.raw_value"><field name="phone"/></li> -->
+                    </tr>
+                    <tr class="text-center table-warning">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td><strong>Total</strong></td>
+                        <td t-esc="total" class="text-end"/>
+                    </tr>
+                </table>
+            </t>
+        </t>
+    </template>
+
+
+
+
+
+
 </odoo>

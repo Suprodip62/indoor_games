@@ -57,17 +57,18 @@
                         </group>
                     </group>
                      <notebook>
-                        <page string="Events">
+                        <!-- <page string="Events">
                             <field name="record_line_ids"/>
-                        </page>
-                        <!-- <page string="Events II">
+                        </page> -->
+                        <page string="Events II">
                             <field name="record_line_ids">
                                 <tree editable="bottom">
                                     <field name="member_name" string="Event Master"/>
                                     <field name="event_game"/>
-                                    <field name="event_game_id"/>
                                     <field name="event_start_time"/>
                                     <field name="event_duration"/>
+                                    <field name="event_players" widget="many2many_tags"/>
+                                    <field name="event_game_id"/>
                                     <field name="event_end_time"/>
                                     <field name="bill"/>
                                 </tree>
@@ -76,16 +77,17 @@
                                         <group>
                                             <field name="member_name"/>
                                             <field name="event_game"/>
-                                            <field name="event_game_id"/>
                                             <field name="event_start_time"/>
                                             <field name="event_duration"/>
+                                            <field name="event_players" widget="many2many_tags"/>
+                                            <field name="event_game_id"/>
                                             <field name="event_end_time"/>
                                             <field name="bill"/>
                                         </group>
                                     </group>
                                 </form>
                             </field>
-                        </page> -->
+                        </page>
                     </notebook>
                     <group>
                         <group>
