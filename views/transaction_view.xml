@@ -19,7 +19,7 @@
                 <field name="payment_method"/>
                 <field name="payment_status" optional="hide"/>
                 <field name="paid_amount"/>
-                <field name="due_amount"/>
+                <!-- <field name="due_amount"/> -->
             </tree>
         </field>
     </record>
@@ -52,10 +52,14 @@
                             <field name="payment_method"/>
                             <field name="payment_status"/>
                             <field name="paid_amount"/>
-                            <field name="due_amount"/>
+                            <!-- <field name="due_amount"/> -->
                         </group>
                     </group>
                 </sheet>
+                <footer>
+                    <button string="Confirm Payment" class="oe_highlight" special="save"/>
+                    <button string="Cancel" class="oe_highlight" special="cancel"/>
+                </footer>
             </form>
         </field>
     </record>

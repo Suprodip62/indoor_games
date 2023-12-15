@@ -40,21 +40,26 @@ class IndoorGames(models.Model):
             # item.event_end_time = item.event_start_time + timedelta(hours=int(item.event_duration))
     event_end_time = fields.Datetime(string="End Time")
     # event_end_time = fields.Datetime(string="End Time", compute="_get_end_date")
-    state = fields.Selection([('draft',"Draft"),('confirm',"Confirm"),('cancel',"Cancel")], string="Status")
+    state = fields.Selection([('draft',"Draft"),('confirm',"Confirm"),('cancel',"Cancel")], string="Status", default='draft')
 
 
     
     # event_satus = in hh hours, mm minutes-->Running-->Closed
     # event_status = fields.Boolean(string="Event Status", compute="_get_status")
 
+
+    currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env['res.currency'].search([('name', '=', 'BDT')]))
+    # currency_id = fields.Many2one('res.currency', string='Currency')
+
+
     delay_hour = fields.Integer(string="Delay Hour", default=0)
     # bill = indoor.game-->charge/hour * event_duration + indoor.game-->indoor.partner_type discount percentage + tax
-    subtotal = fields.Integer(string="Subtotal", default=0, readonly=1)
-    discount = fields.Integer(string="Discount", default=0, readonly=1)
-    participation_discount = fields.Integer(string="Participation Discount", default=0, readonly=1)
+    subtotal = fields.Monetary(string="Subtotal", default=0, readonly=1)
+    discount = fields.Monetary(string="Discount", default=0, readonly=1)
+    participation_discount = fields.Monetary(string="Participation Discount", default=0, readonly=1)
     delay_charge = fields.Integer(string="Delay Charge", default=0, readonly=1)
-    tax = fields.Integer(string="Tax", default=0, readonly=1)
-    bill = fields.Integer(string="Bill", compute="_get_bill")
+    tax = fields.Monetary(string="Tax", default=0, readonly=1)
+    bill = fields.Monetary(string="Bill", compute="_get_bill")
 
     payment_method = fields.Selection([('cash', "Cash"), ('bkash', "bKash")], string="Payment Method")
     # payment_status = paid/due-->boolean, checkbox, default-->due
@@ -159,7 +164,9 @@ class IndoorGames(models.Model):
                 for i in range(1, item.event_game.qty+1, 1):
                     game_id_lst.append(item.event_game.name + "-" + str(i))
                     s1 = item.event_game.name + "-" + str(i)
-                    search_game_ids = item.env['indoor.event'].search([('event_game_id', '=', s1)])
+                    search_game_ids = item.env['indoor.event'].search(['&', ('event_game_id', '=', s1), '|', ('state', '=', 'draft'),('state', '=', 'confirm')])
+                    # search_game_ids = item.env['indoor.event'].search([('event_game_id', '=', s1)])
+
                     
                     if len(search_game_ids) == 0:
                         item.event_game_id = item.event_game.name + "-" + str(i)
@@ -318,3 +325,11 @@ class IndoorGames(models.Model):
   # auto calculate bmi, bmr based on height and weight 
   # measurement field like kg, meter, cm
 # indoor.payment(indoor.transaction) new model thakbe, wizard e payment confirm button e confirm korte hobe. payment id indoor.event e add kore dibo.
+
+
+
+# membership ---> discount or credit limit, for master or players or for both
+# same time e ei event id er kono event ache ki na search korar smy event thakle seta draft or cancel ki na seta o check korte hobe
+# draft state e rekhe gelo, onno keu same time e confirm kore feleche then back kore confirm korte chaile same time e 
+  # 2jon ke deoya hoye jay.
+# event e draft/confrim/cancel state gulo thakbe or not???

@@ -53,6 +53,19 @@ class IndoorGames(models.Model):
             self.member_name.member_type = None
         else:
             self.membership_status = True
+
+        # _get_type()
+        for item in self:
+            print("Member type updated called................")
+            item.partner_type_member_update = item.partner_type # jekhan theke call deoya hoyeche sekhaner value na deoyay error
+            # item.member_name.member_type = item.partner_type
+            item.member_name.membership_end_time = item.membership_end_time
+            if item.partner_type == '100':
+                item.member_name.member_type = 'Basic'
+            elif item.partner_type == '200':
+                item.member_name.member_type = 'Silver'
+            elif item.partner_type == '300':
+                item.member_name.member_type = 'Gold'
         # return True --> not return, something self..........
         # self.membership_status = True
     # https://stackoverflow.com/questions/32287708/python-compare-the-date-in-the-string-with-todays-date

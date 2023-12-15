@@ -2,13 +2,14 @@
 <odoo>
 
 
-    <record id="action_report_indoor" model="ir.actions.report">
-        <field name="name">Indoor Games</field>
+    <record id="action_report_indoor__" model="ir.actions.report">
+        <field name="name">Indoor Games ||</field>
         <field name="model">indoor.tournament</field>
         <field name="report_type">qweb-html</field>
         <field name="report_name">indoor.report_indoor_tournament</field>
         <field name="report_file">indoor.report_indoor_tournament</field>
         <field name="print_report_name">('Report - %s' % (object.member_name.name))</field>
+        
         <field name="binding_model_id" ref="indoor.model_indoor_tournament"/>
         <field name="binding_type">report</field>
     </record>
@@ -18,40 +19,66 @@
             <t t-foreach="docs" t-as="doc">
                 <t t-call="web.external_layout">
                         <div class="row text-center bg-dark">
-                            <h1 t-esc="doc.member_name.name" class="bg-info"/>
+                            <h3 t-esc=" 'Tournament Report for Tournament-' + str(doc.id)  " class="bg-light"/>
                         </div>
-
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="col-8">
-                                    <div class="col-12" style="display:flex;">
-                                        <div class="col-4">
-                                            Tournament Master
-                                        </div>
-                                        <div class="col-8">
-                                            : <span t-esc="doc.member_name.name" class="bg-dark text-warning"/>
-                                        </div>
+                        <div class="container mx-auto my-auto bg-info">
+                            <div class="row">
+                                <div class="col-12" style="display:flex;">
+                                    <div class="col-2">
+                                        Tournament Master
                                     </div>
-                                    <div class="col-12" style="display:flex;">
-                                        <div class="col-4">
-                                            Membership Type
-                                        </div>
-                                        <div class="col-8">
-                                            : <span t-esc="doc.member_name.member_type"/>
-                                        </div>
-                                    </div>
-                                    <div class="col-12" style="display:flex;">
-                                        <div class="col-4">
-                                            email
-                                        </div>
-                                        <div class="col-8">
-                                            : <span t-esc="doc.member_name.email"/>
-                                        </div>
+                                    <div class="col-2">
+                                        : <span t-esc="doc.member_name.name" class=""/>
                                     </div>
                                 </div>
-                                <div class="col-4">
+                                <div class="col-12" style="display:flex;">
+                                    <div class="col-2">
+                                        Membership Type
+                                    </div>
+                                    <div class="col-2">
+                                        : <span t-esc="doc.member_name.member_type"/>
+                                    </div>
                                 </div>
-
+                                <div class="col-12" style="display:flex;">
+                                    <div class="col-2">
+                                        email
+                                    </div>
+                                    <div class="col-2">
+                                        : <span t-esc="doc.member_name.email"/>
+                                    </div>
+                                </div>
+                                <div class="col-12" style="display:flex;">
+                                    <div class="col-2">
+                                        Membership Status
+                                    </div>
+                                    <div class="col-2">
+                                        : <span t-esc="doc.membership_status"/>
+                                    </div>
+                                </div>
+                                <div class="col-12" style="display:flex;">
+                                    <div class="col-2">
+                                        Tournament Start Time
+                                    </div>
+                                    <div class="col-2">
+                                        : <span t-esc="doc.tournament_start_time"/>
+                                    </div>
+                                </div>
+                                <div class="col-12" style="display:flex;">
+                                    <div class="col-2">
+                                        Tournament Duration
+                                    </div>
+                                    <div class="col-2">
+                                        : <span t-esc="doc.tournament_duration"/> Hours
+                                    </div>
+                                </div>
+                                <div class="col-12" style="display:flex;">
+                                    <div class="col-2">
+                                        Tournament End Time
+                                    </div>
+                                    <div class="col-2">
+                                        : <span t-esc="doc.tournament_end_time"/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -83,7 +110,7 @@
                             </tr> -->
                         </table>
                         <div class="row">
-                            <div class="col-12">
+                            <div class="col-12" style="display:flex;">
                                 <div class="col-8">
                                     <div class="col-12" style="display:flex;">
                                         <div class="col-4 bg-success">
@@ -143,78 +170,6 @@
 
         </xpath>
     </template> -->
-
-    <record id="action_report_event_summary" model="ir.actions.report">
-        <field name="name">Event Summary</field>
-        <field name="model">indoor.event</field>
-        <field name="report_type">qweb-html</field>
-        <field name="report_name">indoor.report_event_summary_document</field>
-        <field name="report_file">indoor.report_event_summary_document</field>
-        <field name="print_report_name">('Report - %s' % (object.member_name.name))</field>
-        <field name="binding_model_id" ref="indoor.model_indoor_event"/>
-        <field name="binding_type">report</field>
-    </record>
-
-    <template id="report_event_summary_document">
-        <t t-call="web.html_container">
-            <t t-call="web.external_layout">
-                <div class="row text-center bg-dark">
-                    <h1 class="bg-info"> Event List </h1>
-                </div>
-
-                <table class="table table-sm">
-                    <tr>
-                        <th>Event</th>
-                        <th>Event Master</th>
-                        <th>Start</th>
-                    </tr>
-                    <tr t-foreach="docs" t-as="doc">
-                        <td t-esc="doc.event_game.name"/>
-                        <td t-esc="doc.member_name.name"/>
-                        <td t-esc="doc.event_start_time"/>
-                    </tr>
-                </table>
-            </t>
-        </t>
-    </template>
-
-
-    <record id="action_report_event_summary_with_data" model="ir.actions.report">
-        <field name="name">Event Summary</field>
-        <field name="model">indoor.event</field>
-        <field name="report_type">qweb-html</field>
-        <field name="report_name">indoor.report_event_summary_document_with_data</field>
-        <field name="report_file">indoor.report_event_summary_document_with_data</field>
-        <field name="print_report_name">('Report - %s' % (object.member_name.name))</field>
-        <field name="binding_model_id" ref="indoor.model_indoor_event"/>
-        <field name="binding_type">report</field>
-    </record>
-
-    <template id="report_event_summary_document_with_data">
-        <t t-call="web.html_container">
-            <t t-call="web.external_layout">
-                <div class="row text-center bg-dark">
-                    <h1 class="bg-info"> Event List </h1>
-                    <h6> <span t-esc="start_date"/> to <span t-esc="end_date"/></h6>
-                </div>
-
-                <table class="table table-sm">
-                    <tr>
-                        <th>Event</th>
-                        <th>Event Master</th>
-                        <th>Start</th>
-                    </tr>
-                    <tr t-foreach="data_line" t-as="line">
-                        <td t-esc="line[0]"/>
-                        <td t-esc="line[1]"/>
-                        <td t-esc="line[2]"/>
-                    </tr>
-                </table>
-            </t>
-        </t>
-    </template>
-
-
 
 
 </odoo>

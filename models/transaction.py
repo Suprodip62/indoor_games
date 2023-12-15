@@ -86,6 +86,7 @@ class IndoorGames(models.Model):
     paid_amount = fields.Integer(string="Paid Amount")
     due_amount = fields.Integer(string="Due Amount", compute="_get_due_amount")
     def _get_due_amount(self):
-        for item in self:
-            item.due_amount = item.bill - item.paid_amount
+        # for item in self:
+            # item.due_amount = item.bill - item.paid_amount
+        pass
 
