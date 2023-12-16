@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="view_indoor_report_tree" model="ir.ui.view">
-        <field name="name">indoor.report.tree</field>
-        <field name="model">indoor.report</field>
+    <record id="view_indoor_tevent_tree" model="ir.ui.view">
+        <field name="name">indoor.tevent.tree</field>
+        <field name="model">indoor.tevent</field>
         <field name="arch" type="xml">
             <tree>
+                <field name="member_id"/>
+                <field name="game_id"/>
                 <field name="start_time"/>
+                <field name="duration"/>
                 <field name="end_time"/>
+                <field name="event_game_id"/>
             </tree>
         </field>
     </record>
 
-    <record id="view_indoor_report_form" model="ir.ui.view">
-        <field name="name">indoor.report.form</field>
-        <field name="model">indoor.report</field>
+    <record id="view_indoor_tevent_form" model="ir.ui.view">
+        <field name="name">indoor.tevent.form</field>
+        <field name="model">indoor.tevent</field>
         <field name="arch" type="xml">
             <form>
                 <sheet>
@@ -25,19 +29,14 @@
                         </group>
                         <group>
                             <field name="start_time"/>
+                            <field name="duration"/>
                             <field name="end_time"/>
+                            <field name="event_game_id"/>
                         </group>
                         
                     </group>
                 </sheet>
-                <footer>
-                    <!-- <button name="action_search" string="Print with Object" type="object" class="oe_highlight"/>
-                    <button name="action_search_with_data" string="Print with Data" type="object" class="oe_highlight"/>
-                    <button name="action_search_2" string="Print with Object 2" type="object" class="oe_highlight"/> -->
-                    <!-- <button name="action_search_with_data_2" string="Print with Data 2" type="object" class="oe_highlight"/> -->
-                    <button name="action_search_with_data_2" string="Print" type="object" class="oe_highlight"/>
-                    <button string="Cancel" class="oe_highlight" special="cancel"/>
-                </footer>
+                
             </form>
         </field>
     </record>
@@ -74,22 +73,22 @@
     </record> -->
 
 
-    <record id="action_indoor_report" model="ir.actions.act_window">
-        <field name="name">Report</field>
+    <record id="action_indoor_tevent" model="ir.actions.act_window">
+        <field name="name">tevent</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="res_model">indoor.report</field>
+        <field name="res_model">indoor.tevent</field>
         <!-- <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity</field> -->
-        <field name="view_mode">form</field>
-        <field name="target">new</field>
+        <field name="view_mode">tree,form</field>
+        <!-- <field name="target">new</field> -->
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
-                Create a Report details
+                Create a tevent details
             </p>
         </field>
     </record>
 
 
-    <menuitem id="menu_indoor_report" name="Reports" action="action_indoor_report" parent="menu_indoor_root" sequence="6"/>
+    <menuitem id="menu_indoor_tevent" name="tevents" action="action_indoor_tevent" parent="menu_indoor_root" sequence="7"/>
 
 </odoo>

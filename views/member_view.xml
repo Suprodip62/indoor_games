@@ -28,7 +28,7 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="validate_phone" string="Validate Phone" type="object" class="oe_highlight"/>
+                    <!-- <button name="validate_phone" string="Validate Phone" type="object" class="oe_highlight"/> -->
                 </header>
                 <sheet>
                     <div name="button_box" position="inside">

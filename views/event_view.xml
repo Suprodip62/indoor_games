@@ -53,7 +53,7 @@
                         <group>
                             <field name="event_game"/>
                             <field name="event_start_time"/>
-                            <field name="event_duration"/>
+                            <field name="event_duration" context="{'con_ev' : event_end_time}"/>
                             <field name="event_game_id"/>
                             <field name="event_end_time"/>
                         </group>

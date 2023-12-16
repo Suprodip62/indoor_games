@@ -33,6 +33,7 @@ class IndoorGames(models.Model):
     tournament_due_amount = fields.Monetary(string="Due", compute="_get_tournament_due_amount")
     tournament_transaction_cnt = fields.Integer(string="Transaction Count", compute="_get_tournament_transaction_cnt")
 
+
     def _get_subtotal(self):
         for rec in self:
             sum = 0
@@ -41,13 +42,23 @@ class IndoorGames(models.Model):
             rec.subtotal = sum
     def _get_discount(self):
         for item in self:
-            item.discount = 0
+            # item.discount = 0
+            for rec in item.record_line_ids:
+                if item.member_name.member_type == "None":
+                    item.discount += 0
+                elif item.member_name.member_type == "Basic":
+                    item.discount += (item.subtotal * rec.event_game.basic_partner_discount_percentage/100)   
+                elif item.member_name.member_type == "Silver":
+                    item.discount += (item.subtotal * rec.event_game.silver_partner_discount_percentage/100)  
+                elif item.member_name.member_type == "Gold":
+                    item.discount += (item.subtotal * rec.event_game.gold_partner_discount_percentage/100)
     def _get_participation_discount(self):
         for item in self:
             item.participation_discount = 0
     def _get_tax(self):
         for item in self:
-            item.tax = 0
+            item.tax = item.subtotal * 2/100
+            # item.tax = 0
     def _get_bill(self):
         for item in self:
             item.bill = item.subtotal - item.discount - item.participation_discount + item.tax
@@ -103,14 +114,17 @@ class IndoorGames(models.Model):
                 })
         
     def button_smart_paid(self):
-        return {'name' : 'Transaction',
-            'type' : 'ir.actions.act_window',
-            'res_model' : 'indoor.transaction',
-            'view_mode' : 'tree',
-            # 'target' : 'new',
-            'target' : 'current',
-            'domain' : [('event_id', '=', "tournament-"+str(self.id))]
-        }
+        action = self.env.ref('indoor.action_indoor_transaction').read()[0]
+        action['domain'] = [('event_id', '=', "tournament-"+str(self.id))]
+        return action
+        # return {'name' : 'Transaction',
+        #     'type' : 'ir.actions.act_window',
+        #     'res_model' : 'indoor.transaction',
+        #     'view_mode' : 'tree',
+        #     # 'target' : 'new',
+        #     'target' : 'current',
+        #     'domain' : [('event_id', '=', "tournament-"+str(self.id))]
+        # }
     def button_make_payment(self):
         print("......id.....", self.id)
         return {'name' : 'Transaction',
@@ -162,3 +176,13 @@ class IndoorGames(models.Model):
         for item in self:
             if item.tournament_start_time and item.tournament_duration:
                 item.tournament_end_time = item.tournament_start_time + timedelta(hours=int(item.tournament_duration))
+    
+    # @api.onchange('self.record_line_ids.event_start_time','self.record_line_ids.event_duration')
+    # def onchange_tournament_start_duration(self,):
+    #     for item in self:
+    #         for rec in item.record_line_ids:
+
+    #     if self.record_line_ids.event_start_time and self.record_line_ids.event_duration:
+    #         self.record_line_ids.tournament_duration = item.event_start_time + timedelta(hours=int(item.event_duration))
+    #     print("Type of timedelta: ", type(timedelta(hours=int(item.event_duration))))
+

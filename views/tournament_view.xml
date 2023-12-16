@@ -65,8 +65,8 @@
                                 <tree editable="bottom">
                                     <field name="member_name" string="Event Master"/>
                                     <field name="event_game"/>
-                                    <field name="event_start_time"/>
-                                    <field name="event_duration"/>
+                                    <field name="event_start_time" context="{'con' : parent.record_line_ids, 'event_start_time' : None, 'event_end_time' : event_end_time, 'event_duration' : event_duration, 'event_game_id' : event_game_id}"/>
+                                    <field name="event_duration" context="{'con' : parent.record_line_ids, 'event_start_time' : event_start_time, 'event_end_time' : event_end_time, 'event_duration' : None, 'event_game_id' : event_game_id}"/>
                                     <field name="event_players" widget="many2many_tags"/>
                                     <field name="event_game_id"/>
                                     <field name="event_end_time"/>
@@ -78,7 +78,7 @@
                                             <field name="member_name"/>
                                             <field name="event_game"/>
                                             <field name="event_start_time"/>
-                                            <field name="event_duration"/>
+                                            <field name="event_duration" context="{'event_start_time' : event_start_time, 'event_end_time' : event_end_time, 'event_game_id' : event_game_id}"/>
                                             <field name="event_players" widget="many2many_tags"/>
                                             <field name="event_game_id"/>
                                             <field name="event_end_time"/>

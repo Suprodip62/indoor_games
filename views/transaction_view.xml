@@ -37,11 +37,11 @@
                             <field name="member_name"/>
                         </group>
                         <group>
-                            <field name="event_game"/>
+                            <!-- <field name="event_game"/>
                             <field name="event_game_id"/>
                             <field name="event_start_time"/>
                             <field name="event_duration"/>
-                            <field name="event_end_time"/>
+                            <field name="event_end_time"/> -->
                         </group>
                         <group>
                             <field name="subtotal"/>
@@ -111,6 +111,6 @@
     </record>
 
 
-    <menuitem id="menu_indoor_transaction" name="Transactions" action="action_indoor_transaction" parent="menu_indoor_root" sequence="4"/>
+    <menuitem id="menu_indoor_transaction" name="Transactions" action="action_indoor_transaction" parent="menu_indoor_root" sequence="5"/>
 
 </odoo>

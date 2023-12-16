@@ -140,12 +140,58 @@ class IndoorGames(models.Model):
             'target' : 'current',
             # 'domain' : [('patient_id', '=', self.id)]
         }
-    @api.onchange('event_start_time','event_duration')
+    @api.onchange('event_game', 'event_start_time','event_duration')
     def onchange_event_start_duration(self,):
         for item in self:
             print("type of event_start_time", type(item.event_start_time))
             print("event_start_time", item.event_start_time)
             print("event_duration", item.event_duration)
+            ctx = self.env.context
+            print("................context: ", ctx)
+            ctx_set = self.env.context.get('con', [])
+            print(".........................context: ", ctx_set)
+
+            ctx_ev = self.env.context.get('con_ev', [])
+            print(".........................ctx_ev: ", ctx_ev)
+
+            # con_ev_t = self.env.context.get('con_ev_t', [])
+            # print(".........................con_ev_t: ", con_ev_t)
+
+            con_event_start_time = self.env.context.get('event_start_time', [])
+            print(".........................con_event_start_time: ", con_event_start_time)
+
+            con_event_end_time = self.env.context.get('event_end_time', [])
+            print(".........................con_event_end_time: ", con_event_end_time)
+
+            con_event_duration = self.env.context.get('event_duration', [])
+            print(".........................con_event_duration: ", con_event_duration)
+
+            con_event_game_id = self.env.context.get('event_game_id', [])
+            print(".........................con_event_game_id: ", con_event_game_id)
+
+
+
+
+
+
+
+            
+# [[4, 78, False], [4, 79, False], [4, 85, False], [4, 86, False], [4, 87, False], [4, 88, False], [4, 103, False], 
+# [4, 104, False], [0, 'virtual_2', {'member_name': 5, 'event_game': 1, 'event_start_time': '2023-12-16 10:39:01', 
+                                # 'event_duration': '2', 'event_game_id': 'Carrom-1', 'event_end_time': '2023-12-16 12:39:01'}], 
+                #   [0, 'virtual_3', {'member_name': 5, 'event_game': 1, 'event_start_time': '2023-12-16 10:40:40', 
+                                # 'event_duration': '3', 'event_game_id': 'Carrom-1', 'event_end_time': '2023-12-16 12:40:40'}]]
+            e_list = []
+            for i in range(len(ctx_set) - 1):
+                if ctx_set[i][0] == 0:
+                    dict = ctx_set[i][2]
+                    e_list.append([datetime.strptime(dict['event_start_time'], "%Y-%m-%d %H:%M:%S"), datetime.strptime(dict['event_end_time'], "%Y-%m-%d %H:%M:%S"), dict['event_game_id']])
+            print(".............e_list", e_list)
+            print("..............item.event_game.name", item.event_game.name)
+            # datetime1 = datetime.strptime(dict['event_start_time'], "%Y-%m-%d %H:%M:%S")
+            # datetime1 = datetime.strptime(dict['event_end_time'], "%Y-%m-%d %H:%M:%S")
+
+
 
 
             if item.event_start_time == False or item.event_duration == False: # not None
@@ -164,11 +210,20 @@ class IndoorGames(models.Model):
                 for i in range(1, item.event_game.qty+1, 1):
                     game_id_lst.append(item.event_game.name + "-" + str(i))
                     s1 = item.event_game.name + "-" + str(i)
+
+                    ctx_flag = False
+                    for lst in e_list:
+                        if lst[2] == s1 and ((lst[0] < item.event_start_time < lst[1]) or(lst[0] < item.event_end_time < lst[1])):
+                            ctx_flag = True
+                            break
                     search_game_ids = item.env['indoor.event'].search(['&', ('event_game_id', '=', s1), '|', ('state', '=', 'draft'),('state', '=', 'confirm')])
                     # search_game_ids = item.env['indoor.event'].search([('event_game_id', '=', s1)])
 
                     
-                    if len(search_game_ids) == 0:
+                    if ctx_flag:
+                        print("..................empty ctx_flag")
+                        continue
+                    elif len(search_game_ids) == 0:
                         item.event_game_id = item.event_game.name + "-" + str(i)
                         assign_flag = True
                         print("Empty Search Result: ", item.event_game.name + "-" + str(i))
@@ -187,25 +242,33 @@ class IndoorGames(models.Model):
                 if not assign_flag:
                     raise UserError("The game is not availabe")
                 else:
+                    # vals = {
+                    #     'member_name' : item.member_name.name
+                    # }
+                    # vals = {
+                    #     'member_name' : item.member_name.id,
+                    #     'event_game' : item.event_game.id,
+                    #     'event_game_id' : item.event_game_id,
+                    #     'event_start_time' : item.event_start_time,
+                    #     'event_duration' : item.event_duration,
+                    #     'event_end_time' : item.event_end_time,
+                    #     'subtotal' : item.subtotal,
+                    #     'discount' : item.discount,
+                    #     'participation_discount' : item.participation_discount,
+                    #     'tax' : item.tax,
+                    #     'bill' : item.bill
+                    # }
                     vals = {
-
-                        'member_name' : item.member_name.name
+                        'member_id' : item.member_name.id,
+                        'game_id' : item.event_game.id,
+                        'start_time' : item.event_start_time,
+                        'duration' : item.event_duration,
+                        'end_time' : item.event_end_time,
+                        'event_game_id' : item.event_game_id
                     }
-                    vals = {
-                        'member_name' : item.member_name.id,
-                        'event_game' : item.event_game.id,
-                        'event_game_id' : item.event_game_id,
-                        'event_start_time' : item.event_start_time,
-                        'event_duration' : item.event_duration,
-                        'event_end_time' : item.event_end_time,
-                        'subtotal' : item.subtotal,
-                        'discount' : item.discount,
-                        'participation_discount' : item.participation_discount,
-                        'tax' : item.tax,
-                        'bill' : item.bill
-                    }
+                    item.env['indoor.tevent'].create(vals)
                     
-                    item.env['indoor.event'].create(vals)
+                    # item.env['indoor.event'].create(vals)
                     # id_created = item.env['indoor.event'].create({'event_duration': '1'})
                     # id_created = item.env['indoor.event'].create({'member_name' : item.member_name.id, 'event_duration': item.event_duration})
                     # item.env.cr.commit()
@@ -357,3 +420,18 @@ class IndoorGames(models.Model):
 # draft state e rekhe gelo, onno keu same time e confirm kore feleche then back kore confirm korte chaile same time e 
   # 2jon ke deoya hoye jay.
 # event e draft/confrim/cancel state gulo thakbe or not???
+
+
+# saturday
+# create new transient model for temporary data in event
+# create new transient model record onchange of event_start_time & event_duration
+# search event_game_id on indoor.event & indoor.tevent
+# if customer wants to update event_start_time or event_duration, in the onchange function first search for 
+            # same event_duration and event_start_time/event_end_time. if record found, unlink this first and then go
+            # for the search in indoor.event and indoor.temp_event
+# as transient model records get auto deleted with save/discard so temp_event will not create any issue for next tournament.
+            
+
+# member delete korle tar membership delete hoy na. empty field thake name er jaygay.
+# unique email id system not available
+# comppute function call na hoyar cz one2many tree view e compute function je field theke call hoy sei field thakte hobe.

@@ -6,4 +6,5 @@ access_indoor_event,access_indoor_indoor.event,indoor.model_indoor_event,,1,1,1,
 access_indoor_transaction,access_indoor_indoor.transaction,indoor.model_indoor_transaction,,1,1,1,1
 access_indoor_report,access_indoor_indoor.report,indoor.model_indoor_report,,1,1,1,1
 access_indoor_tournament,access_indoor_indoor.tournament,indoor.model_indoor_tournament,,1,1,1,1
+access_indoor_tevent,access_indoor_indoor.tevent,indoor.model_indoor_tevent,,1,1,1,1
 

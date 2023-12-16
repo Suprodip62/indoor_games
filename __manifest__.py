@@ -10,7 +10,7 @@
     """,
     'author':'Suprodip Sarkar',
     'website': 'https://www.odoo.com/app/invoicing',
-    'depends' : [],
+    'depends' : ['sale'],
     'data': [
         'views/menu.xml',
         'security/ir.model.access.csv',
@@ -22,6 +22,7 @@
         'views/transaction_view.xml',
         'views/report_view.xml',
         'views/tournament_view.xml',
+        # 'views/tevent_view.xml',
         'report/indoor_reports.xml',
         'report/indoor_reports__.xml',
         'report/purchase_reports.xml'
