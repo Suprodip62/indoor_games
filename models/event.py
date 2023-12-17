@@ -54,7 +54,7 @@ class IndoorGames(models.Model):
 
     delay_hour = fields.Integer(string="Delay Hour", default=0)
     # bill = indoor.game-->charge/hour * event_duration + indoor.game-->indoor.partner_type discount percentage + tax
-    subtotal = fields.Monetary(string="Subtotal", default=0, readonly=1)
+    subtotal = fields.Monetary(string="Subtotal", compute="_get_subtotal", store=True)
     discount = fields.Monetary(string="Discount", default=0, readonly=1)
     participation_discount = fields.Monetary(string="Participation Discount", default=0, readonly=1)
     delay_charge = fields.Integer(string="Delay Charge", default=0, readonly=1)
@@ -297,7 +297,10 @@ class IndoorGames(models.Model):
             else:
                 print("Datetime True/False")
             
-
+    @api.depends('event_game', 'event_duration')
+    def _get_subtotal(self):
+        for item in self:            
+            item.subtotal = (int(item.event_game.charge_per_hour) * int(item.event_duration))
 
     @api.depends('event_game', 'event_duration')
     def _get_bill(self):

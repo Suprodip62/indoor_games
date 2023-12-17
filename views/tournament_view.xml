@@ -70,7 +70,8 @@
                                     <field name="event_players" widget="many2many_tags"/>
                                     <field name="event_game_id"/>
                                     <field name="event_end_time"/>
-                                    <field name="bill"/>
+                                    <field name="subtotal"/>
+                                    <!-- <field name="bill"/> -->
                                 </tree>
                                 <form>
                                     <group>
@@ -82,7 +83,8 @@
                                             <field name="event_players" widget="many2many_tags"/>
                                             <field name="event_game_id"/>
                                             <field name="event_end_time"/>
-                                            <field name="bill"/>
+                                            <field name="subtotal"/>
+                                            <!-- <field name="bill"/> -->
                                         </group>
                                     </group>
                                 </form>

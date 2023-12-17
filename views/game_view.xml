@@ -11,8 +11,8 @@
                 <field name="basic_partner_discount_percentage"/>
                 <field name="gold_partner_discount_percentage"/>
                 <field name="silver_partner_discount_percentage"/>
-                <field name="delay_charge"/>
-                <field name="available"/>
+                <!-- <field name="delay_charge"/> -->
+                <!-- <field name="available"/> -->
             </tree>
         </field>
     </record>
@@ -31,8 +31,8 @@
                             <field name="qty"/>
                         </group>
                         <group>
-                            <field name="delay_charge"/>
-                            <field name="available"/>
+                            <!-- <field name="delay_charge"/> -->
+                            <!-- <field name="available"/> -->
                         </group>
                         
                     </group>
