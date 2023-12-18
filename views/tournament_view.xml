@@ -44,7 +44,7 @@
                     </div>
                     <group>
                         <group>
-                            <field name="member_name"/>
+                            <field name="member_name" placeholder="Suprodip Sarkar"/>
                             <field name = "member_email"/>
                             <field name="member_type"/>
                             <field name="membership_status"/>

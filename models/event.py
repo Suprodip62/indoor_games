@@ -438,3 +438,12 @@ class IndoorGames(models.Model):
 # member delete korle tar membership delete hoy na. empty field thake name er jaygay.
 # unique email id system not available
 # comppute function call na hoyar cz one2many tree view e compute function je field theke call hoy sei field thakte hobe.
+
+
+# hk problems with regex
+# sql
+# oop 
+# odoo basic, prev topic, sales purchase flow, inheritance task, security task, kanban view task, report task
+# security - access rights - group
+# credit limit add korbo ki na??? confirm button condition add korbo ki na??? search view filter, group by???
+# qweb task, kanban task --> sales er delivery te table print hoy but template e print er code nai???
