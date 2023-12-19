@@ -42,6 +42,9 @@
                             <field name="tournament_paid_amount"/> -->
                         </button>
                     </div>
+                    <div class="ribbon ribbon-top-right" attrs="{'invisible': ['|', ('tournament_paid_amount', '=', 0), ('tournament_due_amount', '!=', 0)]}">
+                        <span class="bg-success">Paid</span>
+                    </div>
                     <group>
                         <group>
                             <field name="member_name" placeholder="Suprodip Sarkar"/>
@@ -124,22 +127,35 @@
     </record>
 
 
-    <!-- <record id="view_hospital_patient_search" model="ir.ui.view">
-        <field name="name">hospital.patient.search</field>
-        <field name="model">hospital.patient</field>
+    <record id="view_indoor_tournament_search" model="ir.ui.view">
+        <field name="name">indoor.tournament.search</field>
+        <field name="model">indoor.tournament</field>
         <field name="arch" type="xml">
             <search>
-                <field name="name" filter_domain="['|', '|', ('name', 'ilike', self), ('age', 'ilike', self), ('gender', 'ilike', self)]" string="Patient Name"></field>
-                <field name="age"></field>
+                <field name="member_name" filter_domain="[('member_name', 'ilike', self)]" string="Tournament Master"></field>
+                <!-- <field name="age"></field>
                 <field name="gender"></field>
 
                 <field name="bill"></field>
                 <field name="paid"></field>
                 <field name="appointment_time"></field>
-                <field name="booking_time"></field>
+                <field name="booking_time"></field> -->
+                <!-- <field name="tournament_status"/> -->
 
-                <filter name="filter_male" string="Male" domain="[('gender', '=', 'male')]"></filter>
-                <filter name="filter_female" string="Female" domain="[('gender', '=', 'female')]"></filter>
+                <filter name="filter_basic" string="Basic Members" domain="[('member_type', '=', 'Basic')]"/>
+                <filter name="filter_silver" string="Silver Members" domain="[('member_type', '=', 'Silver')]"/>
+                <filter name="filter_gold" string="Gold Members" domain="[('member_type', '=', 'Gold')]"/>
+                <separator></separator>
+                <!-- <filter name="filter_ended" string="Ended" domain="[('tournament_status', '=', 'Ended')]"/>
+                <filter name="filter_running" string="Running" domain="[('tournament_status', '=', 'Running')]"/>
+                <filter name="filter_comming_up" string="Comming Up" domain="[('tournament_status', '=', 'Comming Up')]"/> -->
+                <separator></separator>
+                <!-- <group expand="0" string="Group By">
+                    <filter string="Tournament Status" name="group_by_tournament_status" context="{'group_by' : 'tournament_status'}"/>
+                </group> -->
+
+
+                <!-- <filter name="filter_female" string="Female" domain="[('gender', '=', 'female')]"></filter>
                 <separator></separator>
                 <filter name="filter_kids" string="Kids" domain="[('age', '&lt;=', '5')]"></filter>
                 <separator></separator> 
@@ -149,10 +165,58 @@
                 </group>
                 <searchpanel>
                     <field name="gender" icon="fa-users" select="multi" enable_counters="1"/>
-                </searchpanel>
+                </searchpanel> -->
             </search>
         </field>
-    </record> -->
+    </record>
+
+
+    <record id="view_indoor_tournament_kanban" model="ir.ui.view">
+        <field name="name">indoor.tournament.kanban</field>
+        <field name="model">indoor.tournament</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="member_name"/>
+                <field name="tournament_start_time"/>
+                <field name="tournament_duration"/>
+                <field name="tournament_end_time"/>
+                <field name="curr_time"/>
+                <field name="tournament_status"/>
+                <field name="tournament_img"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_content oe_kanban_global_click o_kanban_record_has_image_fill">
+                            <div class="o_kanban_image_fill_left d-block oe_kanban_avatar">
+                                <field name="tournament_img" widget="image"/>
+                            </div>
+                            <div class="ribbon ribbon-top-right" attrs="{'invisible': [('tournament_status', '!=', 'Running')]}">
+                                <span class="bg-success">Running</span>
+                            </div>
+                            <div class="ribbon ribbon-top-right" attrs="{'invisible': [('tournament_status', '!=', 'Ended')]}">
+                                <span class="bg-secondary text-dark">Ended</span>
+                            </div>
+                            <div class="ribbon ribbon-top-right" attrs="{'invisible': [('tournament_status', '!=', 'Comming Up')]}">
+                                <span class="bg-info">Comming Up</span>
+                            </div>
+                            <div class="oe_kanban_details d-flex flex-column justify-content-between">
+                                    <div>
+                                        <strong class="o_kanban_record_title oe_partner_heading">Master: <field name="member_name"/></strong>
+                                        <div class="o_kanban_tags_section oe_kanban_partner_categories"/>
+                                        <ul>
+                                            <li t-if="record.tournament_start_time.raw_value"><strong> Start Time: </strong> <field name="tournament_start_time"/></li>
+                                            <li t-if="record.tournament_duration.raw_value"><strong> Duration: </strong> <field name="tournament_duration"/></li>
+                                            <li t-if="record.tournament_end_time.raw_value"><strong> End Time: </strong> <field name="tournament_end_time"/></li>
+                                            <li t-if="record.curr_time.raw_value"><field name="curr_time" invisible="1"/></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
 
 
     <record id="action_indoor_tournament" model="ir.actions.act_window">
@@ -160,7 +224,7 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">indoor.tournament</field>
         <!-- <field name="view_mode">tree,kanban,form,calendar,pivot,graph,activity</field> -->
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">kanban,tree,form</field>
         <field name="context">{}</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">

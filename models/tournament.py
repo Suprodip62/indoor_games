@@ -16,10 +16,13 @@ class IndoorGames(models.Model):
     member_type = fields.Char(string="Membership Type")
     membership_status = fields.Boolean(string="Membership Status")
     tournament_start_time = fields.Datetime(string="Start Time")
-    tournament_duration = fields.Selection([('1', "1 Hour"), ('2', '2 Hour'), ('3', "3 Hour")], string="Duration")
+    tournament_duration = fields.Selection([('1', "1 Hour"), ('2', '2 Hour'), ('3', "3 Hour"), ('4', "4 Hour"), ('5', "5 Hour"), ('6', "6 Hour"), ('7', "7 Hour"), ('8', "8 Hour"), ('9', "9 Hour")], string="Duration")
     state = fields.Selection([('draft',"Draft"),('confirm',"Confirm"),('cancel',"Cancel")], string="Status", default='draft')
 
     tournament_end_time = fields.Datetime(string="End Time")
+    curr_time = fields.Datetime(string="Current Datetime", compute="_get_curr_datetime")
+    tournament_status = fields.Char(string="Tournament Status", compute="_get_tournament_status")
+    tournament_img = fields.Image(string="Tournament Image", compute="_get_tournament_img")
 
     record_line_ids = fields.One2many("indoor.event", "tournament_id", string="Tournament")
     currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env['res.currency'].search([('name', '=', 'BDT')]))
@@ -176,6 +179,23 @@ class IndoorGames(models.Model):
         for item in self:
             if item.tournament_start_time and item.tournament_duration:
                 item.tournament_end_time = item.tournament_start_time + timedelta(hours=int(item.tournament_duration))
+    def _get_curr_datetime(self):
+        for item in self:
+            item.curr_time = datetime.now()
+    # @api.depends('tournament_start_time', 'tournament_end_time')
+    def _get_tournament_status(self):
+        for item in self:
+            if item.tournament_start_time < datetime.now() < item.tournament_end_time:
+                item.tournament_status = "Running"
+            elif datetime.now() > item.tournament_end_time:
+                item.tournament_status = "Ended"
+            elif item.tournament_start_time > datetime.now():
+                item.tournament_status = "Comming Up"
+            else:
+                item.tournament_status = "None"
+    def _get_tournament_img(self):
+        for item in self:
+            item.tournament_img = item.member_name.image
     
     # @api.onchange('self.record_line_ids.event_start_time','self.record_line_ids.event_duration')
     # def onchange_tournament_start_duration(self,):

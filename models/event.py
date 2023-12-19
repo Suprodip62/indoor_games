@@ -447,3 +447,8 @@ class IndoorGames(models.Model):
 # security - access rights - group
 # credit limit add korbo ki na??? confirm button condition add korbo ki na??? search view filter, group by???
 # qweb task, kanban task --> sales er delivery te table print hoy but template e print er code nai???
+
+# 18-12-2023
+# member, game, tournament --> added kanban view
+# added ribon member(basic, silver, gold), tournament kanban(comming up, running, ended), tournament form(paid) --> tournament_status field added
+# search view e compute field diye filter kora jay na jodi na store=True thake.
