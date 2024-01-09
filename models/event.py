@@ -452,3 +452,14 @@ class IndoorGames(models.Model):
 # member, game, tournament --> added kanban view
 # added ribon member(basic, silver, gold), tournament kanban(comming up, running, ended), tournament form(paid) --> tournament_status field added
 # search view e compute field diye filter kora jay na jodi na store=True thake.
+
+# 20-12-2023
+# make presentation
+# revise tasks(bonus qty task, search view task, access rights task, report with dictionary task, report inheritance task, kanban view inheritance task, menuitem inheritance task, special number tasks)
+# project code 
+# session revision(access rights, record rules, sales flow, relational field(supervisor,subordinate), decorators, xpath, CRM, Project task)
+# git (push, pull, make branch)
+# problem solving, sql
+# pythonpowers, odoo mates, weblerans
+
+# many2many field e kono ekta Mr. Abul(obj) kono ekta field ei relation e thakte parbe.

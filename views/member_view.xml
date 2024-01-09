@@ -77,8 +77,8 @@
                                 <group string="Genaral Measurement">
                                     <field name="height"/>
                                     <field name="weight"/>
-                                    <field name="bmi"/>
-                                    <field name="bmr"/>
+                                    <!-- <field name="bmi"/> -->
+                                    <!-- <field name="bmr"/> -->
                                 </group>
                                 <group string="Injury Information">
                                     <field name="injury_point"/>

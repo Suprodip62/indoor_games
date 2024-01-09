@@ -144,6 +144,9 @@
         </xpath>
     </template> -->
 
+
+
+    <!-- mamun vai - report with object -->
     <record id="action_report_event_summary" model="ir.actions.report">
         <field name="name">Event Summary</field>
         <field name="model">indoor.event</field>
@@ -177,8 +180,9 @@
             </t>
         </t>
     </template>
+    <!-- mamun vai - report with object -->
 
-
+    <!-- mamun vai - report with tuples -->
     <record id="action_report_event_summary_with_data" model="ir.actions.report">
         <field name="name">Event Summary</field>
         <field name="model">indoor.event</field>
@@ -213,6 +217,7 @@
             </t>
         </t>
     </template>
+    <!-- mamun vai - report with tuples -->
 
 
 

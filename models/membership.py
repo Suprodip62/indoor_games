@@ -28,6 +28,9 @@ class IndoorGames(models.Model):
     membership_status = fields.Boolean(string="Membership Status", compute="_get_status")
 
     membership_fees = fields.Integer(string="Fees", compute="_get_fees", readonly=1) # onchange: basic-->100, silver-->200, gold-->300 times(*) 1 for 1 month, 2 for 2 month
+    membership_transaction_cnt = fields.Integer(string="Member Transaction cnt", compute="_get_membership_transaction_cnt")
+
+    membership_paid_amount = fields.Integer(string="Paid", compute="_get_membership_paid_amount")
 
     @api.depends('partner_type', 'membership_duration')
     def _get_fees(self):
@@ -86,4 +89,47 @@ class IndoorGames(models.Model):
 
             # print("member name................", item.member_name.member_type)
             # print("member type................", item.partner_type)
+    def button_make_payment(self):
+        return {'name' : 'Transaction',
+            'type' : 'ir.actions.act_window',
+            'res_model' : 'indoor.transaction',
+            'view_mode' : 'form',
+            'target' : 'new',
+            # 'target' : 'current',
+            # 'target' : 'main',
+            'context' : {'member_name' : self.member_name.name, 
+                         'event_id' : "membership-"+str(self.id),
+                         'bill' : self.membership_fees
+                        }
+            # 'domain' : [('patient_id', '=', self.id)]
+        }
             
+    def _get_membership_transaction_cnt(self):
+        for item in self:
+            search_transaction_ids = item.env['indoor.transaction'].search([('event_id', '=', "membership-"+str(item.id))])
+            cnt = 0
+            for rec in search_transaction_ids:
+                cnt += 1
+            item.membership_transaction_cnt = cnt
+    def button_smart_paid(self):
+        # action = self.env.ref('indoor.action_indoor_transaction').read()[0]
+        # action['domain'] = [('event_id', '=', "tournament-"+str(self.id))]
+        # return action
+        return {'name' : 'Transaction',
+            'type' : 'ir.actions.act_window',
+            'res_model' : 'indoor.transaction',
+            'view_mode' : 'tree,form',
+            # 'target' : 'new',
+            'target' : 'current',
+            'domain' : [('event_id', '=', "membership-"+str(self.id))]
+        }
+    def _get_membership_paid_amount(self):
+        for item in self:
+            search_transaction_ids = item.env['indoor.transaction'].search([('event_id', '=', "membership-"+str(item.id))])
+            sum = 0
+            # cnt = 0
+            for rec in search_transaction_ids:
+                sum += rec.paid_amount
+                # cnt += 1
+            item.membership_paid_amount = sum
+            # item.tournament_transaction_cnt = cnt

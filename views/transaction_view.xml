@@ -8,12 +8,12 @@
             <tree>
                 <field name="transaction_id"/>
                 <field name="event_id"/>
-                <field name="member_name" string="Event Master"/>
-                <field name="event_game"/>
+                <field name="member_name" string="Master"/>
+                <!-- <field name="event_game"/>
                 <field name="event_game_id"/>
                 <field name="event_start_time"/>
                 <field name="event_duration"/>
-                <field name="event_end_time"/>
+                <field name="event_end_time"/> -->
                 <!-- <field name="event_players" widget="many2many_tags"/> -->
                 <field name="bill" optional="hide"/>
                 <field name="payment_method"/>
@@ -44,13 +44,13 @@
                             <field name="event_end_time"/> -->
                         </group>
                         <group>
-                            <field name="subtotal"/>
+                            <!-- <field name="subtotal"/>
                             <field name="discount"/>
                             <field name="participation_discount"/>
-                            <field name="tax"/>
+                            <field name="tax"/> -->
                             <field name="bill"/>
                             <field name="payment_method"/>
-                            <field name="payment_status"/>
+                            <!-- <field name="payment_status"/> -->
                             <field name="paid_amount"/>
                             <!-- <field name="due_amount"/> -->
                         </group>

@@ -112,11 +112,15 @@
                             <group>
                             </group>
                             <group>
-                                <field name="subtotal"/>
-                                <field name="discount"/>
-                                <field name="participation_discount"/>
-                                <field name="tax"/>
-                                <field name="bill"/>
+                                <group>
+                                </group>
+                                <group>
+                                    <field name="subtotal"/>
+                                    <field name="discount"/>
+                                    <!-- <field name="participation_discount"/> -->
+                                    <field name="tax"/>
+                                    <field name="bill"/>
+                                </group>
                             </group>
                             
                         </group>

@@ -22,12 +22,12 @@ class IndoorGames(models.Model):
     language = fields.Char(string='Language')
     gender = fields.Selection([('male', "Male"), ('female', 'Female')], string="Gender")
     dob = fields.Date(string="Date of Birth")
-    age = fields.Integer(string="Age")
+    age = fields.Integer(string="Age", compute="_get_age", store=True)
 
     height = fields.Float(string="Height")
     weight = fields.Float(string="Weight")
-    bmi = fields.Float(string="BMI")
-    bmr = fields.Float(string="BMR")
+    bmi = fields.Float(string="BMI", compute="_get_bmi")
+    bmr = fields.Float(string="BMR", compute="_get_bmr")
     injury_point = fields.Selection([('head', "Head"), ('face', "Face"), ('neck', "Neck")], string="Injury Point")
     injury_type = fields.Selection([('fractures', "Fractures"), ('burns', "Burns"), ('concussion', "Concussion"), ('sprains', "Sprains"), ('catastrophic_injury', "Catastrophic Injury"), ('pulled_muscle', "Pulled Muscle"), ('strains', "Strains"), ('animal_bites', "Animal Bites"), ('blunt_trauma', "Blunt Trauma"), ('dislocation', "Dislocation"),('tendinitis', "Tendinitis")], string="Injury Type")
     injury_level = fields.Selection([('minor', "Minor"), ('moderate', "Moderate"), ('serious', "Serious"), ('severe', "Severe"), ('critical', "Critical"), ('maximal', "Maximal")], string="Injury Level")
@@ -53,6 +53,25 @@ class IndoorGames(models.Model):
 
     member_transaction_cnt = fields.Integer(string="Member Transaction cnt", compute="_get_member_transaction_cnt")
 
+    # @api.depends('weight', 'height')
+    def _get_bmi(self):
+        for item in self:
+            item.bmi = item.weight / (item.height * item.height)
+    @api.depends('dob')
+    def _get_age(self):
+        for rec in self:
+            today = date.today()
+            if rec.dob:
+                rec.age = today.year - rec.dob.year
+            else:
+                rec.age = 0
+    # @api.depends('weight', 'height', 'age')
+    def _get_bmr(self):
+        for item in self:
+            if item.gender == 'male':
+                item.bmr = (10 * item.weight) + (6.25 * (item.height * 100)) - (5 * item.age) + 5
+            elif item.gender == 'female':
+                item.bmr = (10 * item.weight) + (6.25 * (item.height * 100)) - (5 * item.age) -161
     def _get_mem_status(self):
         pass
     def validate_phone(self):
@@ -117,7 +136,7 @@ class IndoorGames(models.Model):
         return {'name' : 'Transaction',
             'type' : 'ir.actions.act_window',
             'res_model' : 'indoor.transaction',
-            'view_mode' : 'tree',
+            'view_mode' : 'tree,form',
             # 'target' : 'new',
             'target' : 'current',
             'domain' : [('member_name', '=', self.name)]

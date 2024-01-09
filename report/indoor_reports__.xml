@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-
+    <!-- doc tournament print -->
     <record id="action_report_indoor__" model="ir.actions.report">
         <field name="name">Indoor Games ||</field>
         <field name="model">indoor.tournament</field>
@@ -171,7 +171,7 @@
         </xpath>
     </template> -->
 
-
+    <!-- report with dictionary -->
     <record id="action_report_event_summary_2" model="ir.actions.report">
         <field name="name">Event Summary</field>
         <field name="model">indoor.event</field>
@@ -215,6 +215,7 @@
     </template>
 
 
+    <!-- event summary with dictionary(search result) -->
     <record id="action_report_event_summary_with_data_2" model="ir.actions.report">
         <field name="name">Event Summary</field>
         <field name="model">indoor.event</field>
@@ -251,7 +252,8 @@
                         <td t-esc="line['event_start_time']"/>
                         <td t-esc="line['event_duration']"/>
                         <td t-esc="line['event_end_time']"/>
-                        <td t-esc="line['subtotal']" class="text-end"/>
+                        <!-- <td t-esc="line['subtotal']" class="text-end"/> -->
+                        <td class="text-end"><t t-esc="line['subtotal']"/><t t-esc=" '&#2547;' "/></td>
                         <t t-set="total" t-value="total + line['subtotal']"/>
                         <t t-set="cnt" t-value="cnt + 1"/>
                         <!-- <li t-if="record.phone.raw_value"><field name="phone"/></li> -->
@@ -260,15 +262,31 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td><strong>Total</strong></td>
-                        <td t-esc="total" class="text-end"/>
+                        <td><strong>Total</strong>  </td>
+                        <!-- <td t-esc="total, '&#2547;' " class="text-end"/> -->
+                        <td class="text-end"><t t-esc="total"/><t t-esc=" '&#2547;' "/></td>
                     </tr>
                 </table>
             </t>
         </t>
     </template>
+    <!-- report with dictionary -->
 
 
+
+
+<!-- <t t-set="total" t-value="o.amount_untaxed"/>
+<t t-foreach="o.tax_line" t-as="t">
+  <small> <tr>
+    <td>
+      <t t-if="t.amount &gt;= 0.0">
+        <p t-esc="t.amount"/>
+        <t t-set="total" t-value="total + t.amount"/>
+      </t>
+    </td>
+    <td><t t-esc="total"/></td>
+  </tr> </small> <br></br>
+</t> -->
 
 
 
